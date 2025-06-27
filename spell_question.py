@@ -28,44 +28,17 @@ class pilgan(tk.Frame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(3, weight=3)
 
-        # --- pemanggilan file image untuk soal dan jawaban ---
-        # *soal
-        soal_path = "assets/test-image3.png"
-        soal = Image.open(soal_path)
-        soal_img = soal.resize((300,160))  # Optional resize
-        question = ImageTk.PhotoImage(soal_img)
-
-        # *jawaban
-        # a.
-        jwb_path = "assets/test-image3.png"
-        jawab = Image.open(jwb_path)
-        jawab_img = jawab.resize((100,50))  # Optional resize
-        answerA = ImageTk.PhotoImage(jawab_img)
-        # b.
-        jwb_path = "assets/test-image3.png"
-        jawab = Image.open(jwb_path)
-        jawab_img = jawab.resize((100,50))  # Optional resize
-        answerB = ImageTk.PhotoImage(jawab_img)
-        # c.
-        jwb_path = "assets/test-image3.png"
-        jawab = Image.open(jwb_path)
-        jawab_img = jawab.resize((100,50))  # Optional resize
-        answerC = ImageTk.PhotoImage(jawab_img)
-        # d.
-        jwb_path = "assets/test-image3.png"
-        jawab = Image.open(jwb_path)
-        jawab_img = jawab.resize((100,50))  # Optional resize
-        answerD = ImageTk.PhotoImage(jawab_img)
-
-        # answer randomizer
+        # answer randomizer 
+        self.question = min(lcg(0) % 10, 10)
         self.correct = "Benar"
         self.answer_array = ["Salah" for i in range(4)]
         # injecting self.correct to the array
         self.answer_array[(lcg(0) % 4)] = self.correct
 
+
         # --- penempatan label ---
         # *soal
-        self.enemyinfo_lbl = tk.Label(self, text=f"{ min(lcg(0) % 10, 10) }")
+        self.enemyinfo_lbl = tk.Label(self, text=f"{ self.question }", value=3)
         self.enemyinfo_lbl.grid(row=2, column=1, columnspan=2, padx=10, pady=10)
 
         # --- penempatan tombol return to menu ---
@@ -75,19 +48,15 @@ class pilgan(tk.Frame):
         # --- penempatan tombol battle system ---
         self.ans1_btn = tk.Button(self, text=self.answer_array[0])
         self.ans1_btn.grid(row=3, column=1, padx=(10,20), pady=15)
-        # image reference untuk mencegah garbage collection
 
         self.ans2_btn = tk.Button(self, text=self.answer_array[1])
         self.ans2_btn.grid(row=3, column=2, padx=(20,10), pady=15)
-        # image reference untuk mencegah garbage collection
 
         self.ans3_btn = tk.Button(self, text=self.answer_array[2])
         self.ans3_btn.grid(row=4, column=1, padx=(10,20), pady=15)
-        # image reference untuk mencegah garbage collection
 
         self.ans4_btn = tk.Button(self, text=self.answer_array[3])
         self.ans4_btn.grid(row=4, column=2, padx=(20,10), pady=15)
-        # image reference untuk mencegah garbage collection
 
     def goto_attack_difc(self):
         from battle_menu import attack_diffc
