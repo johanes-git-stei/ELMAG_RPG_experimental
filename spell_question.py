@@ -29,7 +29,7 @@ class pilgan(tk.Frame):
         self.grid_columnconfigure(3, weight=3)
 
         # answer randomizer 
-        self.question = min(lcg(0) % 10, 10)
+        self.question = lcg(0) % 10
         self.correct = "Benar"
         self.answer_array = ["Salah" for i in range(4)]
         # injecting self.correct to the array
@@ -38,7 +38,7 @@ class pilgan(tk.Frame):
 
         # --- penempatan label ---
         # *soal
-        self.enemyinfo_lbl = tk.Label(self, text=f"{ self.question }", value=3)
+        self.enemyinfo_lbl = tk.Label(self, text=f"{ self.question }")
         self.enemyinfo_lbl.grid(row=2, column=1, columnspan=2, padx=10, pady=10)
 
         # --- penempatan tombol return to menu ---
