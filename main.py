@@ -3,9 +3,9 @@ from main_menu import open_menu
 import os
 import sys
 
-
-
 # completely new way to load files
+
+# use this pyinstaller main.py --onefile --add-data "assets;assets"
 def resource_path(relative_path):
     try:
         base_path = sys._MEIPASS
