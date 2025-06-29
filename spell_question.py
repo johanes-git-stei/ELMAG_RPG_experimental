@@ -11,9 +11,11 @@ class pilgan(tk.Frame):
         # randomizer
         from rng import lcg
 
+        from main import resource_path
+
         # --- memanggil background image dari folder assets dan dijadikan background wallpaper ---
         # mengambil file dari folder assets dan menaruhnya di label
-        bg_pil = Image.open("assets/test-image2.jpg")
+        bg_pil = Image.open(resource_path("assets/test-image2.jpg"))
         bg_pil = bg_pil.resize((450, 450))
         bg_img = ImageTk.PhotoImage(bg_pil)
         bg_lbl = tk.Label(self, image=bg_img)

@@ -10,9 +10,11 @@ class start_battle(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
 
+        from main import resource_path
+
         # --- memanggil background image dari folder assets dan dijadikan background wallpaper ---
         # mengambil file dari folder assets dan menaruhnya di label
-        bg_pil = Image.open("assets/test-image2.jpg")
+        bg_pil = Image.open(resource_path("assets/test-image2.jpg"))
         bg_pil = bg_pil.resize((450, 450))
         bg_img = ImageTk.PhotoImage(bg_pil)
         bg_lbl = tk.Label(self, image=bg_img)
@@ -62,9 +64,11 @@ class start_attack(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
 
+        from main import resource_path
+
         # --- memanggil background image dari folder assets dan dijadikan background wallpaper ---
         # mengambil file dari folder assets dan menaruhnya di label
-        bg_pil = Image.open("assets/test-image2.jpg")
+        bg_pil = Image.open(resource_path("assets/test-image2.jpg"))
         bg_pil = bg_pil.resize((450, 450))
         bg_img = ImageTk.PhotoImage(bg_pil)
         bg_lbl = tk.Label(self, image=bg_img)
@@ -117,9 +121,11 @@ class attack_diffc(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
 
+        from main import resource_path
+
         # --- memanggil background image dari folder assets dan dijadikan background wallpaper ---
         # mengambil file dari folder assets dan menaruhnya di label
-        bg_pil = Image.open("assets/test-image2.jpg")
+        bg_pil = Image.open(resource_path("assets/test-image2.jpg"))
         bg_pil = bg_pil.resize((450, 450))
         bg_img = ImageTk.PhotoImage(bg_pil)
         bg_lbl = tk.Label(self, image=bg_img)

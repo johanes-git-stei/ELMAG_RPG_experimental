@@ -53,8 +53,25 @@ class debuff():
         self.enemy_block_stat = 100
 
         if stat_draw == 0:
-            self.enemy_attack_stat += self.rng_boost
+            self.enemy_attack_stat += self.rng_debuff
         elif stat_draw == 1:
-            self.enemy_heal_stat += self.rng_boost
+            self.enemy_heal_stat += self.rng_debuff
         elif stat_draw == 2:
-            self.enemy_block_stat += self.rng_boost
+            self.enemy_block_stat += self.rng_debuff
+
+        # effin around with switch case
+        def attack():
+            return self.enemy_attack_stat + self.rng_debuff
+        def heal():
+            return self.enemy_heal_stat + self.rng_debuff
+        def block():
+            return self.enemy_block_stat + self.rng_debuff
+
+        switcher = {
+            0: attack,
+            1: heal,
+            2: block
+            }
+
+        def switch(stat_draw):
+            return switcher.get(stat_draw)()
