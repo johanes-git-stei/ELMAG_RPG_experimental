@@ -8,6 +8,8 @@ class battle_anim(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
         
+        from main import resource_path
+
         # Load battle actions
         with open("battle_temp.txt", "r", encoding="utf-8") as f:
             self.action = json.load(f)
@@ -21,7 +23,7 @@ class battle_anim(tk.Frame):
             self.enm_stat = json.load(f)
 
         # Background image
-        bg_pil = Image.open("assets/floor_bg.png").resize((1584, 864))
+        bg_pil = Image.open(resource_path("assets/floor_bg.png")).resize((1584, 864))
         bg_img = ImageTk.PhotoImage(bg_pil)
         bg_lbl = tk.Label(self, image=bg_img)
         bg_lbl.image = bg_img
@@ -115,7 +117,8 @@ class battle_anim(tk.Frame):
             self.after(2000, lambda: self.enemy_act_step())
 
     def enemy_act_step(self):
-        action = random.randint(1,7)
+        from rng import lcg
+        action = max(1, lcg(0) % 8)
         if action <= 4:
             self.after(0, lambda: self.finish_enemy_attack())
         elif action <= 6:
@@ -125,7 +128,10 @@ class battle_anim(tk.Frame):
 
     def finish_enemy_attack(self):
         self.update_battle_info("Monster menyerang Anda!")
-        dmg = random.randint(1,3)
+
+        from rng import lcg
+
+        dmg = max(1, lcg(0) % 4)
         if self.my_stat[1] != 0:
             if dmg < self.my_stat[1]:
                 self.my_stat[1] -= dmg
@@ -153,8 +159,9 @@ class battle_anim(tk.Frame):
         self.after(2000, lambda: (self.update_battle_info(""), self.after(0, self.check_end_conditions())))
 
     def finish_enemy_block(self):
+        from rng import lcg
         self.update_battle_info("Monster memblokir serangan Anda!")
-        block = random.randint(1,2)
+        block = max(1, lcg(0) % 3)
         self.enm_stat[1] += block
         self.update_enemy_stat(f"Monster\n{self.enm_stat[0]} HP (+{block})")
         self.after(2000, lambda: (self.update_battle_info(""), self.after(0, self.check_end_conditions())))

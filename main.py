@@ -1,6 +1,18 @@
 import tkinter as tk
 import json
 from main_menu import open_menu
+import sys
+import os
+
+# completely new way to load files
+# use this pyinstaller main.py --onefile --add-data "assets;assets"
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".") 
+
+    return os.path.join(base_path, relative_path)
 
 class main(tk.Tk):
     def __init__(self):

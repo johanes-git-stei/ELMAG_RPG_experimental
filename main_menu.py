@@ -2,18 +2,30 @@ import tkinter as tk
 from tkinter import messagebox, PhotoImage
 from PIL import Image, ImageTk
 import os
-import pyglet, os
+import pyglet, sys
 
-pyglet.font.add_file('assets/Jersey10-Regular.ttf')
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".") 
+
+    return os.path.join(base_path, relative_path)
+
+
+pyglet.font.add_file(resource_path('assets/Jersey10-Regular.ttf'))
 
 class open_menu(tk.Frame):
 
     def __init__(self, master):
         super().__init__(master)
 
+        from main import resource_path
+
         # --- memanggil background image dari folder assets dan dijadikan background wallpaper ---
         # mengambil file dari folder assets dan menaruhnya di label
-        bg_pil = Image.open("assets/homepage_bg.png")
+        bg_pil = Image.open(resource_path("assets/homepage_bg.png"))
         bg_pil = bg_pil.resize((1584, 864))
         bg_img = ImageTk.PhotoImage(bg_pil)
         bg_lbl = tk.Label(self, image=bg_img)

@@ -12,6 +12,8 @@ class start_battle(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
 
+        from main import resource_path
+
         with open("battle_temp.txt", "w", encoding="utf-8") as f:
             json.dump([0,0,0], f)
 
@@ -32,7 +34,7 @@ class start_battle(tk.Frame):
 
         # --- memanggil background image dari folder assets dan dijadikan background wallpaper ---
         # mengambil file dari folder assets dan menaruhnya di label
-        bg_pil = Image.open("assets/floor_bg.png")
+        bg_pil = Image.open(resource_path("assets/floor_bg.png"))
         bg_pil = bg_pil.resize((1584, 864))
         bg_img = ImageTk.PhotoImage(bg_pil)
         bg_lbl = tk.Label(self, image=bg_img)

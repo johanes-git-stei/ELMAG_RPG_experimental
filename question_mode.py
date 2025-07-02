@@ -10,13 +10,16 @@ class start_question(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
 
+        from rng import lcg
+        from main import resource_path
+
         with open("battle_temp.txt", "r", encoding="utf-8") as f:
             self.battle_list = json.load(f)
         self.act_point = self.battle_list
 
         # --- memanggil background image dari folder assets dan dijadikan background wallpaper ---
         # mengambil file dari folder assets dan menaruhnya di label
-        bg_pil = Image.open("assets/question_bg.png")
+        bg_pil = Image.open(resource_path("assets/question_bg.png"))
         bg_pil = bg_pil.resize((1584, 864))
         bg_img = ImageTk.PhotoImage(bg_pil)
         bg_lbl = tk.Label(self, image=bg_img)
@@ -33,9 +36,9 @@ class start_question(tk.Frame):
 
         # --- pemanggilan file image untuk soal dan jawaban ---
         # *soal
-        random_soal_num = random.randint(1, 5)  # Simulasi soal acak, bisa diubah sesuai kebutuhan
+        random_soal_num = max(1, lcg(0) % 6)  # Simulasi soal acak, bisa diubah sesuai kebutuhan
         soal_path = f"soal/BAB {random_soal_num}/Soal.png"
-        soal = Image.open(soal_path)
+        soal = Image.open(resource_path(soal_path))
         soal_img = soal.resize((400,225))  # Optional resize
         question = ImageTk.PhotoImage(soal_img)
 
@@ -45,7 +48,7 @@ class start_question(tk.Frame):
 
         self.imgs = []
         for p in randomized_jawaban:
-            pil = Image.open(p).resize((200,113))
+            pil = Image.open(resource_path(p)).resize((200,113))
             self.imgs.append(ImageTk.PhotoImage(pil))
 
         # *soal
