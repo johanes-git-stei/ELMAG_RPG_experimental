@@ -7,9 +7,9 @@ import json
 class battle_anim(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
+
+        from main import resource_path
         
-
-
         # Load battle actions
         with open("battle_temp.txt", "r", encoding="utf-8") as f:
             self.action = json.load(f)
@@ -23,7 +23,7 @@ class battle_anim(tk.Frame):
             self.enm_stat = json.load(f)
 
         # Background image
-        bg_pil = Image.open("assets/test-image2.jpg").resize((450, 450))
+        bg_pil = Image.open(resource_path("assets/test-image2.jpg")).resize((450, 450))
         bg_img = ImageTk.PhotoImage(bg_pil)
         bg_lbl = tk.Label(self, image=bg_img)
         bg_lbl.image = bg_img
