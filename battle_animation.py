@@ -21,7 +21,7 @@ class battle_anim(tk.Frame):
             self.enm_stat = json.load(f)
 
         # Background image
-        bg_pil = Image.open("assets/test-image2.jpg").resize((450, 450))
+        bg_pil = Image.open("assets/floor_bg.png").resize((1584, 864))
         bg_img = ImageTk.PhotoImage(bg_pil)
         bg_lbl = tk.Label(self, image=bg_img)
         bg_lbl.image = bg_img
@@ -35,20 +35,20 @@ class battle_anim(tk.Frame):
 
         # Labels
         if self.enm_stat[1] != 0:
-            self.enemyinfo_lbl = tk.Label(self, text=f"Monster\n{self.enm_stat[0]} HP (+{self.enm_stat[1]})", font=("Arial", 20))
+            self.enemyinfo_lbl = tk.Label(self, text=f"Monster\n{self.enm_stat[0]} HP (+{self.enm_stat[1]})", font=("Arial", 20), bg="#090F1F", fg='#FFFFFF')
             self.enemyinfo_lbl.grid(row=0, column=2, padx=10, pady=10, sticky="e")
         else:
-            self.enemyinfo_lbl = tk.Label(self, text=f"Monster\n{self.enm_stat[0]} HP", font=("Arial", 20))
+            self.enemyinfo_lbl = tk.Label(self, text=f"Monster\n{self.enm_stat[0]} HP", font=("Arial", 20), bg="#090F1F", fg='#FFFFFF')
             self.enemyinfo_lbl.grid(row=0, column=2, padx=10, pady=10, sticky="e")
 
         if self.my_stat[1] != 0:
-            self.playerinfo_lbl = tk.Label(self, text=f"[Kimi No Nawa]\n{self.my_stat[0]} HP (+{self.my_stat[1]})", font=("Arial", 20))
+            self.playerinfo_lbl = tk.Label(self, text=f"Maxwell\n{self.my_stat[0]} HP (+{self.my_stat[1]})", font=("Arial", 20), bg="#090F1F", fg='#FFFFFF')
             self.playerinfo_lbl.grid(row=0, column=0, padx=10, pady=10, sticky="w")
         else:
-            self.playerinfo_lbl = tk.Label(self, text=f"[Kimi No Nawa]\n{self.my_stat[0]} HP", font=("Arial", 20))
+            self.playerinfo_lbl = tk.Label(self, text=f"Maxwell\n{self.my_stat[0]} HP", font=("Arial", 20), bg="#090F1F", fg='#FFFFFF')
             self.playerinfo_lbl.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
-        self.battleinfo_lbl = tk.Label(self, text="", font=("Arial", 12), width=50, anchor='center')
+        self.battleinfo_lbl = tk.Label(self, text="", font=("Arial", 12), width=50, anchor='center', bg="#A4AEC8")
         self.battleinfo_lbl.grid(row=3, column=0, columnspan=3)
 
         # Start the first player action after a short delay
@@ -92,7 +92,7 @@ class battle_anim(tk.Frame):
         if self.action[1] != 0:
             self.my_stat[1] += self.action[1]
             self.update_battle_info(f"Anda dapat memblokir serangan monster sebanyak {self.action[1]} HP!")
-            self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0]} HP (+{self.action[1]})")
+            self.update_my_stat(f"Maxwell\n{self.my_stat[0]} HP (+{self.action[1]})")
             self.after(2000, lambda: self.player_hel_check())
         else:
             # proceed to enemy turn
@@ -106,9 +106,9 @@ class battle_anim(tk.Frame):
             if self.my_stat[0] > 10:  # Assuming max HP is 10
                 self.my_stat[0] = 10
             if self.my_stat[1] != 0:
-                self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0]} HP (+{self.my_stat[1]})")
+                self.update_my_stat(f"Maxwell\n{self.my_stat[0]} HP (+{self.my_stat[1]})")
             else:
-                self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0]} HP")
+                self.update_my_stat(f"Maxwell\n{self.my_stat[0]} HP")
             self.after(2000, lambda: self.enemy_act_step())
         else:
             # proceed to enemy turn
@@ -129,17 +129,17 @@ class battle_anim(tk.Frame):
         if self.my_stat[1] != 0:
             if dmg < self.my_stat[1]:
                 self.my_stat[1] -= dmg
-                self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0]} HP (+{self.my_stat[1]})")
+                self.update_my_stat(f"Maxwell\n{self.my_stat[0]} HP (+{self.my_stat[1]})")
             elif dmg == self.my_stat[1]:
                 self.my_stat[1] = 0
-                self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0]} HP")
+                self.update_my_stat(f"Maxwell\n{self.my_stat[0]} HP")
             elif dmg > self.my_stat[1]:
                 self.my_stat[0] -= (dmg - self.my_stat[1])
                 self.my_stat[1] = 0
-                self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0]} HP")
+                self.update_my_stat(f"Maxwell\n{self.my_stat[0]} HP")
         else:
             self.my_stat[0] -= dmg
-            self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0]} HP")
+            self.update_my_stat(f"Maxwell\n{self.my_stat[0]} HP")
         self.after(2000, lambda: (self.update_battle_info(""), self.after(0, self.check_end_conditions())))
 
     def finish_enemy_heal(self):

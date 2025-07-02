@@ -32,8 +32,8 @@ class start_battle(tk.Frame):
 
         # --- memanggil background image dari folder assets dan dijadikan background wallpaper ---
         # mengambil file dari folder assets dan menaruhnya di label
-        bg_pil = Image.open("assets/test-image2.jpg")
-        bg_pil = bg_pil.resize((450, 450))
+        bg_pil = Image.open("assets/floor_bg.png")
+        bg_pil = bg_pil.resize((1584, 864))
         bg_img = ImageTk.PhotoImage(bg_pil)
         bg_lbl = tk.Label(self, image=bg_img)
         # image reference untuk mencegah garbage collection
@@ -42,49 +42,49 @@ class start_battle(tk.Frame):
         bg_lbl.place(x=0, y=0, relwidth=1, relheight=1)      
 
         # --- formatting penempatan label dan tombol ---
-        self.grid_rowconfigure(1, weight=2)
+        self.grid_rowconfigure(1, weight=5)
         self.grid_rowconfigure(6, weight=1)
         for i in range(5):
             self.grid_columnconfigure(i, weight=1)
 
         # --- penempatan label ---
         if self.enm_stat[1] != 0:
-            self.enemyinfo_lbl = tk.Label(self, text=f"Monster\n{self.enm_stat[0]} HP (+{self.enm_stat[1]})", font=("Arial", 20))
+            self.enemyinfo_lbl = tk.Label(self, text=f"Monster\n{self.enm_stat[0]} HP (+{self.enm_stat[1]})", font=("Arial", 20), bg="#090F1F", fg='#FFFFFF')
             self.enemyinfo_lbl.grid(row=0, column=3, padx=10, pady=10, sticky="e")
         else:
-            self.enemyinfo_lbl = tk.Label(self, text=f"Monster\n{self.enm_stat[0]} HP", font=("Arial", 20))
+            self.enemyinfo_lbl = tk.Label(self, text=f"Monster\n{self.enm_stat[0]} HP", font=("Arial", 20), bg="#090F1F", fg='#FFFFFF')
             self.enemyinfo_lbl.grid(row=0, column=3, padx=10, pady=10, sticky="e")
 
         if self.my_stat[1] != 0:
-            self.playerinfo_lbl = tk.Label(self, text=f"[Kimi No Nawa]\n{self.my_stat[0]} HP (+{self.my_stat[1]})", font=("Arial", 20))
-            self.playerinfo_lbl.grid(row=0, column=1, padx=10, pady=10, sticky="e")
+            self.playerinfo_lbl = tk.Label(self, text=f"Maxwell\n{self.my_stat[0]} HP (+{self.my_stat[1]})", font=("Arial", 20), bg="#090F1F", fg='#FFFFFF')
+            self.playerinfo_lbl.grid(row=0, column=1, padx=10, pady=10, sticky="w")
         else:
-            self.playerinfo_lbl = tk.Label(self, text=f"[Kimi No Nawa]\n{self.my_stat[0]} HP", font=("Arial", 20))
-            self.playerinfo_lbl.grid(row=0, column=1, padx=10, pady=10, sticky="e")
+            self.playerinfo_lbl = tk.Label(self, text=f"Maxwell\n{self.my_stat[0]} HP", font=("Arial", 20), bg="#090F1F", fg='#FFFFFF')
+            self.playerinfo_lbl.grid(row=0, column=1, padx=10, pady=10, sticky="w")
 
-        self.actioninfo_lbl = tk.Label(self, text=f"Action Anda:\n{self.action[0]}\n{self.action[1]}\n{self.action[2]}", width=25, wraplength=200, height=6, font=("Arial", 15))
-        self.actioninfo_lbl.grid(row=0, column=2)
+        self.actioninfo_lbl = tk.Label(self, text=f"Action Anda: {self.action[0]} {self.action[1]} {self.action[2]}", width=40, wraplength=600, height=2, font=("Arial", 14), bg="#090F1F", fg='#FFFFFF')
+        self.actioninfo_lbl.grid(row=0, column=2, padx=0, sticky="n")
 
-        self.battleinfo_lbl = tk.Label(self, text="", font=("Arial", 12), anchor='center', width=50)
+        self.battleinfo_lbl = tk.Label(self, text="", font=("Arial", 12), anchor='center', width=50, bg="#A4AEC8", fg='#000000')
         self.battleinfo_lbl.grid(row=3, column=1, columnspan=3)
 
         # --- penempatan tombol battle system ---
-        self.attack_btn = tk.Button(self, text="Attack!", command=lambda: self.add_action('Attack'), width=25, height=2)
+        self.attack_btn = tk.Button(self, text="Attack!", command=lambda: self.add_action('Attack'), width=25, height=2, bg="#F2C152")
         self.attack_btn.grid(row=4, column=1, padx=(5,5), pady=15)
 
-        self.block_btn = tk.Button(self, text="Block!", command=lambda: self.add_action('Block'), width=25, height=2)
+        self.block_btn = tk.Button(self, text="Block!", command=lambda: self.add_action('Block'), width=25, height=2, bg="#F2C152")
         self.block_btn.grid(row=4, column=2, padx=(5,5), pady=15)
 
-        self.heal_btn = tk.Button(self, text="Heal!", command=lambda: self.add_action('Heal'), width=25, height=2)
+        self.heal_btn = tk.Button(self, text="Heal!", command=lambda: self.add_action('Heal'), width=25, height=2, bg="#F2C152")
         self.heal_btn.grid(row=4, column=3, padx=(5,5), pady=15)
 
-        self.surrend_btn = tk.Button(self, text="Surrender!",command=self.goto_main_menu, width=25, height=2)
+        self.surrend_btn = tk.Button(self, text="Surrender!",command=self.goto_main_menu, width=25, height=2, bg="#F2C152")
         self.surrend_btn.grid(row=5, column=1, padx=(5,5), pady=15)
 
-        self.commitact_btn = tk.Button(self, text="Commit!", command=self.goto_start_question, width=25, height=2)
+        self.commitact_btn = tk.Button(self, text="Commit!", command=self.goto_start_question, width=25, height=2, bg="#F2C152")
         self.commitact_btn.grid(row=5, column=2, padx=(5,5), pady=15)
 
-        self.resetact_btn = tk.Button(self, text="Reset Action.",command=self.reset_action, width=25, height=2)
+        self.resetact_btn = tk.Button(self, text="Reset Action.",command=self.reset_action, width=25, height=2, bg="#F2C152")
         self.resetact_btn.grid(row=5, column=3, padx=(5,5), pady=15)
 
     def goto_main_menu(self):
@@ -126,7 +126,7 @@ class start_battle(tk.Frame):
         for t in range(3):
             if self.action[t] == '':
                 self.action[t] = f"{words}"
-                self.update_action_info(f"Action Anda:\n{self.action[0]}\n{self.action[1]}\n{self.action[2]}")
+                self.update_action_info(f"Action Anda: {self.action[0]} {self.action[1]} {self.action[2]}")
                 break
             elif self.action[2] != '':
                 self.update_battle_info(f"Anda tidak memiliki action point lagi!")
