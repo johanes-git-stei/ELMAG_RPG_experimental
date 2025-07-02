@@ -59,8 +59,6 @@ class start_question(tk.Frame):
 
         # 1. pick a random slot (1–4) for the correct answer
         self.correct_value = random.randint(1, len(self.imgs))
-        self.test = tk.Label(self, text=f"{self.act_point}\n{self.correct_value}")
-        self.test.grid(row=1, column=0, padx=10, pady=10)
 
         # 2. make a pool of wrong images
         wrongs = self.imgs[1:].copy()
