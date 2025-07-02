@@ -1,75 +1,58 @@
 import tkinter as tk
-from tkinter import messagebox, PhotoImage
+from tkinter import messagebox
 from PIL import Image, ImageTk
 import random
-import time
 import json
-
-import tkinter as tk
-
-from matplotlib import text
 
 class battle_anim(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
-
+        
+        # Load battle actions
         with open("battle_temp.txt", "r", encoding="utf-8") as f:
-            self.battle_list = json.load(f)
-        self.action = self.battle_list
-
+            self.action = json.load(f)
+        
+        # Load player stats
         with open("player_stat_temp.txt", "r", encoding="utf-8") as f:
-            self.player_stat = json.load(f)
-        self.my_stat = self.player_stat
-
+            self.my_stat = json.load(f)
+        
+        # Load enemy stats
         with open("enemy_stat_temp.txt", "r", encoding="utf-8") as f:
-            self.enemy_stat = json.load(f)
-        self.enm_stat = self.enemy_stat
+            self.enm_stat = json.load(f)
 
-        # --- memanggil background image dari folder assets dan dijadikan background wallpaper ---
-        # mengambil file dari folder assets dan menaruhnya di label
-        bg_pil = Image.open("assets/test-image2.jpg")
-        bg_pil = bg_pil.resize((450, 450))
+        # Background image
+        bg_pil = Image.open("assets/test-image2.jpg").resize((450, 450))
         bg_img = ImageTk.PhotoImage(bg_pil)
         bg_lbl = tk.Label(self, image=bg_img)
-        # image reference untuk mencegah garbage collection
         bg_lbl.image = bg_img
-        # posisi label background image relatif pada window
-        bg_lbl.place(x=0, y=0, relwidth=1, relheight=1)      
+        bg_lbl.place(x=0, y=0, relwidth=1, relheight=1)
 
-        # --- formatting penempatan label dan tombol ---
+        # Grid configuration
         self.grid_rowconfigure(1, weight=2)
         self.grid_rowconfigure(6, weight=1)
-        for i in range(5):
+        for i in range(3):
             self.grid_columnconfigure(i, weight=1)
 
-        # --- penempatan label ---
-        self.enemyinfo_lbl = tk.Label(self, text="Monster\n3 HP", font=("Arial", 20))
-        self.enemyinfo_lbl.grid(row=0, column=3, padx=10, pady=10, sticky="e")
+        # Labels
+        if self.enm_stat[1] != 0:
+            self.enemyinfo_lbl = tk.Label(self, text=f"Monster\n{self.enm_stat[0]} HP (+{self.enm_stat[1]})", font=("Arial", 20))
+            self.enemyinfo_lbl.grid(row=0, column=2, padx=10, pady=10, sticky="e")
+        else:
+            self.enemyinfo_lbl = tk.Label(self, text=f"Monster\n{self.enm_stat[0]} HP", font=("Arial", 20))
+            self.enemyinfo_lbl.grid(row=0, column=2, padx=10, pady=10, sticky="e")
 
-        self.playerinfo_lbl = tk.Label(self, text="[Kimi No Nawa]\n10 HP", font=("Arial", 20))
-        self.playerinfo_lbl.grid(row=0, column=1, padx=10, pady=10, sticky="e")
+        if self.my_stat[1] != 0:
+            self.playerinfo_lbl = tk.Label(self, text=f"[Kimi No Nawa]\n{self.my_stat[0]} HP (+{self.my_stat[1]})", font=("Arial", 20))
+            self.playerinfo_lbl.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        else:
+            self.playerinfo_lbl = tk.Label(self, text=f"[Kimi No Nawa]\n{self.my_stat[0]} HP", font=("Arial", 20))
+            self.playerinfo_lbl.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
-        self.battleinfo_lbl = tk.Label(self, text="", font=("Arial", 12), anchor='center', width=50)
-        self.battleinfo_lbl.grid(row=3, column=1, columnspan=3)
+        self.battleinfo_lbl = tk.Label(self, text="", font=("Arial", 12), width=50, anchor='center')
+        self.battleinfo_lbl.grid(row=3, column=0, columnspan=3)
 
-        # --- penempatan tombol battle system ---
-        self.player_act_anim()
-
-        if self.enm_stat[0] <= 0:
-            self.update_battle_info("Monster telah dikalahkan!")
-            messagebox.showinfo("Battle Result", "Anda telah mengalahkan monster!")
-            self.goto_main_menu()
-
-
-        self.enemy_act_anim()
-
-        if self.my_stat[0] <= 0:
-            self.update_battle_info("Anda kalah!")
-            messagebox.showinfo("Battle Result", "Anda telah kalah!")
-            self.goto_main_menu()
-        
-        self.update_battle_info("")
-
+        # Start the first player action after a short delay
+        self.after(2000, self.player_att_check)
 
     def update_my_stat(self,word):
         self.playerinfo_lbl.config(text=word)
@@ -77,53 +60,154 @@ class battle_anim(tk.Frame):
     def update_enemy_stat(self,word):
         self.enemyinfo_lbl.config(text=word)
 
-    def player_act_anim(self):
+    def update_battle_info(self, text):
+        self.battleinfo_lbl.config(text=text)
+
+    def player_att_check(self):
         if self.action[0] != 0:
-            self.update_battle_info(f"Anda menyerang monster sebanyak {self.action[0]} HP!")
-            time.sleep(2)
+            dmg = self.action[0]
+            self.update_battle_info(f"Anda menyerang monster sebanyak {dmg} HP!")
+            if self.enm_stat[1] != 0:
+                if dmg < self.enm_stat[1]:
+                    self.enm_stat[1] -= dmg
+                    self.after(2000, lambda: self.update_battle_info(f"serangan anda diblokir sebanyak {self.enm_stat[1]} HP!"))
+                    self.update_enemy_stat(f"Monster\n{self.enm_stat[0]} HP (+{self.enm_stat[1]})")
+                    self.check_end_conditions()
+                elif dmg == self.enm_stat[1]:
+                    self.enm_stat[1] = 0
+                    self.after(2000, lambda: self.update_battle_info(f"serangan anda diblokir sebanyak {self.enm_stat[1]} HP!"))
+                    self.check_end_conditions()
+                elif dmg > self.enm_stat[1]:
+                    self.enm_stat[0] -= (dmg - self.enm_stat[1])
+                    self.enm_stat[1] = 0
+                    self.after(2000, lambda: self.update_battle_info(f"serangan anda diblokir sebanyak {self.enm_stat[1]} HP!"))
+                    self.update_enemy_stat(f"Monster\n{self.enm_stat[0]} HP)")
+                    self.check_end_conditions()
+            else:
+                self.enm_stat[0] -= dmg
+                self.update_enemy_stat(f"Monster\n{self.enm_stat[0]} HP")
+                self.check_end_conditions()
+            self.after(2000, lambda: self.player_blk_check())
+        else:
+            # proceed to enemy turn
+            self.after(2000, lambda: self.player_blk_check())
 
+    def player_blk_check(self):
         if self.action[1] != 0:
-            self.update_battle_info(f"Anda menyerang monster sebanyak {self.action[1]} HP!")
-            time.sleep(0.1)
+            self.my_stat[1] += self.action[1]
+            self.update_battle_info(f"Anda dapat memblokir serangan monster sebanyak {self.action[1]} HP!")
             self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0]} HP (+{self.action[1]})")
-            time.sleep(2)
+            self.after(2000, lambda: self.player_hel_check())
+        else:
+            # proceed to enemy turn
+            self.after(2000, lambda: self.player_hel_check())
 
+    def player_hel_check(self):
         if self.action[2] != 0:
-            self.update_battle_info(f"Anda menyerang monster sebanyak {self.action[2]} HP!")
-            time.sleep(0.1)
-            self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0] + self.action[2]} HP")
-            time.sleep(2)
-    
-    def enemy_act_anim(self):
-        self.enemy_action = random.randint(1,7)
-        if self.enemy_action == 1 or self.enemy_action == 2 or self.enemy_action == 3 or self.enemy_action == 4:
-            self.update_battle_info("Monster menyerang Anda!")
-            time.sleep(0.1)
-            attack_damage = random.randint(1, 3)  # Simulasi kerusakan serangan monster
-            self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0] - attack_damage} HP")
-            time.sleep(2)
-        elif self.enemy_action == 5 or self.enemy_action == 6:
-            block_value = random.randint(1, 2)  # Simulasi nilai blokir monster
-            self.update_battle_info("Monster memblokir serangan Anda!")
-            time.sleep(2)
-        elif self.enemy_action == 7:
-            self.update_battle_info("Monster menyembuhkan diri!")
-            time.sleep(0.1)
-            self.update_enemy_stat(f"Monster\n{self.act_point[0] + 1} HP")
-            time.sleep(2)
+            heal = self.action[2]
+            self.update_battle_info(f"Anda menyembuhkan diri sebanyak {heal} HP!")
+            self.my_stat[0] += heal
+            if self.my_stat[0] > 10:  # Assuming max HP is 10
+                self.my_stat[0] = 10
+            if self.my_stat[1] != 0:
+                self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0]} HP (+{self.my_stat[1]})")
+            else:
+                self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0]} HP")
+            self.after(2000, lambda: self.enemy_act_step())
+        else:
+            # proceed to enemy turn
+            self.after(2000, lambda: self.enemy_act_step())
 
-    def update_action_info(self, word):
-        self.actioninfo_lbl.config(text=word)
+    def enemy_act_step(self):
+        action = random.randint(1,7)
+        if action <= 4:
+            self.after(0, lambda: self.finish_enemy_attack())
+        elif action <= 6:
+            self.after(0, lambda: self.finish_enemy_block())
+        else:
+            self.after(0, lambda: self.finish_enemy_heal())
 
-    def update_battle_info(self, word):
-        self.battleinfo_lbl.config(text=word)
+    def finish_enemy_attack(self):
+        self.update_battle_info("Monster menyerang Anda!")
+        dmg = random.randint(1,3)
+        if self.my_stat[1] != 0:
+            if dmg < self.my_stat[1]:
+                self.my_stat[1] -= dmg
+                self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0]} HP (+{self.my_stat[1]})")
+                self.check_end_conditions()
+            elif dmg == self.my_stat[1]:
+                self.my_stat[1] = 0
+                self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0]} HP")
+                self.check_end_conditions()
+            elif dmg > self.my_stat[1]:
+                self.my_stat[0] -= (dmg - self.my_stat[1])
+                self.my_stat[1] = 0
+                self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0]} HP")
+                self.check_end_conditions()
+        else:
+            self.my_stat[0] -= dmg
+            self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0]} HP")
+        self.after(2000, lambda: (self.update_battle_info(""), self.after(0, self.check_end_conditions())))
 
-    def reset_action(self):
-        self.action = ['','','']
-        self.update_action_info(f"Action Anda:\n{self.action[0]}\n{self.action[1]}\n{self.action[2]}")
-        self.update_battle_info("")
+    def finish_enemy_heal(self):
+        self.update_battle_info("Monster menyembuhkan diri!")
+        self.enm_stat[0] += 1
+        if self.enm_stat[0] > 3:  # Assuming max HP is 3
+            self.enm_stat[0] = 3
+        if self.enm_stat[1] != 0:
+            self.update_enemy_stat(f"Monster\n{self.enm_stat[0]} HP (+{self.enm_stat[1]})")
+        self.update_enemy_stat(f"Monster\n{self.enm_stat[0]} HP")
+        self.after(2000, lambda: (self.update_battle_info(""), self.after(0, self.check_end_conditions())))
+
+    def finish_enemy_block(self):
+        self.update_battle_info("Monster memblokir serangan Anda!")
+        block = random.randint(1,2)
+        self.enm_stat[1] += block
+        self.update_enemy_stat(f"Monster\n{self.enm_stat[0]} HP (+{block})")
+        self.after(2000, lambda: (self.update_battle_info(""), self.after(0, self.check_end_conditions())))
+
+    def check_end_conditions(self):
+        if self.enm_stat[0] <= 0:
+            self.update_battle_info("Monster telah dikalahkan!")
+            messagebox.showinfo("Battle Result", "Anda telah mengalahkan monster!")
+            self.reset_all_stat()
+            self.goto_main_menu()
+        elif self.my_stat[0] <= 0:
+            self.update_battle_info("Anda kalah!")
+            messagebox.showinfo("Battle Result", "Anda telah kalah!")
+            self.reset_all_stat()
+            self.goto_main_menu()
+        else:
+            self.update_battle_info("")
+            self.goto_start_battle()
+
+    def reset_all_stat(self):
+        self.reset_action = [0,0,0]  # Reset action points
+        with open("battle_temp.txt", "w", encoding="utf-8") as f:
+                json.dump(self.reset_action, f)
+
+        with open("player_stat_temp.txt", "w", encoding="utf-8") as f:
+                json.dump([10,0], f)
+
+        with open("enemy_stat_temp.txt", "w", encoding="utf-8") as f:
+                json.dump([3,0], f)
+
+    def goto_start_battle(self):
+        self.reset_action = [0,0,0]  # Reset action points
+        with open("battle_temp.txt", "w", encoding="utf-8") as f:
+                json.dump(self.reset_action, f)
+
+        with open("player_stat_temp.txt", "w", encoding="utf-8") as f:
+                json.dump(self.my_stat, f)
+
+        with open("enemy_stat_temp.txt", "w", encoding="utf-8") as f:
+                json.dump(self.enm_stat, f)
+
+        from battle_mode import start_battle
+        self.master.show_page(start_battle)
+
+
 
     def goto_main_menu(self):
         from main_menu import open_menu
         self.master.show_page(open_menu)
-        

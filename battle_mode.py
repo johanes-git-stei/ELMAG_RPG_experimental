@@ -17,6 +17,14 @@ class start_battle(tk.Frame):
 
         self.action = ['','','']
         self.act_point = [0,0,0]
+        
+        # Load player stats
+        with open("player_stat_temp.txt", "r", encoding="utf-8") as f:
+            self.my_stat = json.load(f)
+        
+        # Load enemy stats
+        with open("enemy_stat_temp.txt", "r", encoding="utf-8") as f:
+            self.enm_stat = json.load(f)
 
         self.att_val = 1
         self.blk_val = 1
@@ -40,11 +48,19 @@ class start_battle(tk.Frame):
             self.grid_columnconfigure(i, weight=1)
 
         # --- penempatan label ---
-        self.enemyinfo_lbl = tk.Label(self, text="Monster\n3 HP", font=("Arial", 20))
-        self.enemyinfo_lbl.grid(row=0, column=3, padx=10, pady=10, sticky="e")
+        if self.enm_stat[1] != 0:
+            self.enemyinfo_lbl = tk.Label(self, text=f"Monster\n{self.enm_stat[0]} HP (+{self.enm_stat[1]})", font=("Arial", 20))
+            self.enemyinfo_lbl.grid(row=0, column=3, padx=10, pady=10, sticky="e")
+        else:
+            self.enemyinfo_lbl = tk.Label(self, text=f"Monster\n{self.enm_stat[0]} HP", font=("Arial", 20))
+            self.enemyinfo_lbl.grid(row=0, column=3, padx=10, pady=10, sticky="e")
 
-        self.playerinfo_lbl = tk.Label(self, text="[Kimi No Nawa]\n10 HP", font=("Arial", 20))
-        self.playerinfo_lbl.grid(row=0, column=1, padx=10, pady=10, sticky="e")
+        if self.my_stat[1] != 0:
+            self.playerinfo_lbl = tk.Label(self, text=f"[Kimi No Nawa]\n{self.my_stat[0]} HP (+{self.my_stat[1]})", font=("Arial", 20))
+            self.playerinfo_lbl.grid(row=0, column=1, padx=10, pady=10, sticky="e")
+        else:
+            self.playerinfo_lbl = tk.Label(self, text=f"[Kimi No Nawa]\n{self.my_stat[0]} HP", font=("Arial", 20))
+            self.playerinfo_lbl.grid(row=0, column=1, padx=10, pady=10, sticky="e")
 
         self.actioninfo_lbl = tk.Label(self, text=f"Action Anda:\n{self.action[0]}\n{self.action[1]}\n{self.action[2]}", width=25, wraplength=200, height=6, font=("Arial", 15))
         self.actioninfo_lbl.grid(row=0, column=2)

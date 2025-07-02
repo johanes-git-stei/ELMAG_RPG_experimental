@@ -1,4 +1,5 @@
 import tkinter as tk
+import json
 from main_menu import open_menu
 
 class main(tk.Tk):
@@ -12,6 +13,20 @@ class main(tk.Tk):
 
         self.current_page = None
         self.show_page(open_menu)
+
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
+    
+    def on_close(self):
+        with open("battle_temp.txt", "w", encoding="utf-8") as f:
+                json.dump([0,0,0], f)
+
+        with open("player_stat_temp.txt", "w", encoding="utf-8") as f:
+                json.dump([10,0], f)
+
+        with open("enemy_stat_temp.txt", "w", encoding="utf-8") as f:
+                json.dump([3,0], f)
+        
+        self.destroy()
 
     def show_page(self, page_class):
         """Destroy current page and show a new one."""
