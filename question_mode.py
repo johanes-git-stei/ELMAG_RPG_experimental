@@ -1,10 +1,8 @@
 import tkinter as tk
-from tkinter import messagebox, PhotoImage
+from tkinter import messagebox
 from PIL import Image, ImageTk
 import json
 import random
-
-import tkinter as tk
 
 class start_question(tk.Frame):
     def __init__(self, master):
@@ -13,89 +11,76 @@ class start_question(tk.Frame):
         from rng import lcg
         from main import resource_path
 
+        # Load data battle
         with open("battle_temp.txt", "r", encoding="utf-8") as f:
-            self.battle_list = json.load(f)
-        self.act_point = self.battle_list
+            self.act_point = json.load(f)
 
-        # --- memanggil background image dari folder assets dan dijadikan background wallpaper ---
-        # mengambil file dari folder assets dan menaruhnya di label
-        bg_pil = Image.open(resource_path("assets/question_bg.png"))
-        bg_pil = bg_pil.resize((1584, 864))
+        # --- Background setup ---
+        bg_pil = Image.open(resource_path("assets/question_bg.png")).resize((1584, 864))
         bg_img = ImageTk.PhotoImage(bg_pil)
         bg_lbl = tk.Label(self, image=bg_img)
-        # image reference untuk mencegah garbage collection
-        bg_lbl.image = bg_img
-        # posisi label background image relatif pada window
+        bg_lbl.image = bg_img  # Prevent GC
         bg_lbl.place(x=0, y=0, relwidth=1, relheight=1)
 
-        # --- formatting penempatan label dan tombol ---
+        # --- Layout grid config ---
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(4, weight=1)
         for i in range(4):
             self.grid_columnconfigure(i, weight=1)
 
-        # --- pemanggilan file image untuk soal dan jawaban ---
-        # *soal
-        random_soal_num = max(1, lcg(0) % 6)  # Simulasi soal acak, bisa diubah sesuai kebutuhan
+        # --- Load random soal dan jawaban ---
+        random_soal_num = max(1, lcg(0) % 6)  # Nomor soal 1–5
         soal_path = f"soal/BAB {random_soal_num}/Soal.png"
-        soal = Image.open(resource_path(soal_path))
-        soal_img = soal.resize((400,225))  # Optional resize
-        question = ImageTk.PhotoImage(soal_img)
+        jawaban_benar_path = f"soal/BAB {random_soal_num}/Jawaban Benar.png"
+        jawaban_paths = [
+            jawaban_benar_path,
+            f"soal/BAB {random_soal_num}/Jawaban Salah 1.png",
+            f"soal/BAB {random_soal_num}/Jawaban Salah 2.png",
+            f"soal/BAB {random_soal_num}/Jawaban Salah 3.png"
+        ]
 
-        jawaban = [f"soal/BAB {random_soal_num}/Jawaban Benar.png", f"soal/BAB {random_soal_num}/Jawaban Salah 1.png", f"soal/BAB {random_soal_num}/Jawaban Salah 2.png", f"soal/BAB {random_soal_num}/Jawaban Salah 3.png"]
+        randomized_jawaban = random.sample(jawaban_paths, 4)
+        self.index_benar = randomized_jawaban.index(jawaban_benar_path)
 
-        randomized_jawaban = random.sample(jawaban, 4)  # Mengacak urutan jawaban
-
-        self.imgs = []
-        for p in randomized_jawaban:
-            pil = Image.open(resource_path(p)).resize((200,113))
-            self.imgs.append(ImageTk.PhotoImage(pil))
-
-        # *soal
-        self.question_lbl = tk.Label(self, image=question, bg="#090F1F", fg='#FFFFFF')
+        # --- Load gambar soal ---
+        soal_img = Image.open(resource_path(soal_path)).resize((400, 225))
+        self.question_img = ImageTk.PhotoImage(soal_img)
+        self.question_lbl = tk.Label(self, image=self.question_img, bg="#090F1F")
         self.question_lbl.grid(row=1, column=1, columnspan=2, padx=10, pady=10)
-        # image reference untuk mencegah garbage collection
-        self.question_lbl.image = question
 
-        # --- informasi jawaban ---
+        # --- Load gambar jawaban ---
+        self.imgs = []
+        for path in randomized_jawaban:
+            img_pil = Image.open(resource_path(path)).resize((200, 113))
+            self.imgs.append(ImageTk.PhotoImage(img_pil))
+
+        # --- RadioButton jawaban ---
         self.selected = tk.IntVar()
 
-        # 1. pick a random slot (1–4) for the correct answer
-        self.correct_value = random.randint(1, len(self.imgs))
-
-        # 2. make a pool of wrong images
-        wrongs = self.imgs[1:].copy()
-
-        # 3. build radiobuttons in a 2×2 grid
-        for slot in range(1, len(self.imgs) + 1):
-            if slot == self.correct_value:
-                img = self.imgs[0]
-            else:
-                # take a random wrong image
-                img = wrongs.pop(random.randrange(len(wrongs)))
-
+        for i, img in enumerate(self.imgs):
             rb = tk.Radiobutton(
                 self,
                 variable=self.selected,
-                value=slot,
+                value=i,
                 image=img,
-                text=chr(ord("A") + slot - 1),  # "A", "B", "C", "D"
+                text=chr(ord("A") + i),  # A, B, C, D
                 compound="right",
                 bg="#F2C152"
             )
-            rb.image = img  # prevent GC
-            row, col = divmod(slot-1, 2)
-            rb.grid(row=row+2, column=col+1, padx=10, pady=10)
+            rb.image = img
+            row, col = divmod(i, 2)
+            rb.grid(row=row + 2, column=col + 1, padx=10, pady=10)
 
-        # Submit button
+        # --- Tombol Submit ---
         submit = tk.Button(self, text="Submit", command=self.on_select)
         submit.grid(row=4, column=1, columnspan=2, pady=15)
 
     def on_select(self):
         choice = self.selected.get()
-        if choice == 0:
+
+        if choice == -1 or self.selected.get() is None:
             messagebox.showwarning("Perhatian", "Silakan pilih salah satu jawaban terlebih dahulu.")
-        elif choice == self.correct_value:
+        elif choice == self.index_benar:
             messagebox.showinfo("Hasil", "Jawaban Benar!")
             self.goto_battle_anim()
         else:
@@ -103,9 +88,8 @@ class start_question(tk.Frame):
             with open('data.json', 'w', encoding='utf-8') as f:
                 json.dump({}, f, ensure_ascii=False, indent=2)
 
-            self.act_point[0] = int(self.act_point[0]/2)
-            self.act_point[1] = int(self.act_point[1]/2)
-            self.act_point[2] = int(self.act_point[2]/2)
+            # Kurangi act point separuh
+            self.act_point = [int(p / 2) for p in self.act_point]
 
             with open("battle_temp.txt", "w", encoding="utf-8") as f:
                 json.dump(self.act_point, f)
