@@ -22,20 +22,24 @@ class open_menu(tk.Frame):
         # --- formatting penempatan label dan tombol ---
         self.grid_rowconfigure(0, weight=3)
         self.grid_rowconfigure(4, weight=1)
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(2, weight=1)
+        for j in range(3):
+            self.grid_columnconfigure(j, weight=1)
 
         # --- penempatan tombol menu ---
-        self.start_btn = tk.Button(self, text="Start", command=self.go_to_page_two, width=30, height=2)
+        self.start_btn = tk.Button(self, text="Start", command=self.goto_start_battle, width=30, height=2)
         self.start_btn.grid(row=1, column=1, padx=10, pady=15)
 
         self.achiv_btn = tk.Button(self, text="Statistics and Achievement", width=30, height=2)
         self.achiv_btn.grid(row=2, column=1, padx=10, pady=15)
 
-        self.quit_btn = tk.Button(self, text="Quit Game", width=30, height=2)
+        self.quit_btn = tk.Button(self, text="Quit Game", command=self.kill_game, width=30, height=2)
         self.quit_btn.grid(row=3, column=1, padx=10, pady=15)
 
-    def go_to_page_two(self):
+    def goto_start_battle(self):
         # import here to avoid circular import at module load time
-        from battle_menu import start_battle
+        from battle_mode import start_battle
         self.master.show_page(start_battle)
+
+    def kill_game(self):
+        if messagebox.askokcancel("Quit?", "Do you want to quit the game?"):
+            self.master.destroy()

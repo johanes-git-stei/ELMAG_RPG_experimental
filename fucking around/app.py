@@ -1,28 +1,18 @@
 import tkinter as tk
-from page1 import PageOne
-from page2 import PageTwo
 
-class App(tk.Tk):
-    def __init__(self):
-        super().__init__()
-        self.title("Grid-Based Window Switcher")
-        self.geometry("400x200")
-        # make row/column 0 expandable so pages fill the window
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
+root = tk.Tk()
+root.geometry("300x300")  # overall window size
 
-        self.current_page = None
-        self.show_page(PageOne)
+# 1. Configure 3 rows and 3 columns to share space equally
+for i in range(3):
+    root.grid_rowconfigure(i, weight=1)
+    root.grid_columnconfigure(i, weight=1)
 
-    def show_page(self, page_class):
-        """Destroy current page and show a new one."""
-        if self.current_page is not None:
-            self.current_page.destroy()
-        # instantiate and grid the new page
-        self.current_page = page_class(self)
-        self.current_page.grid(row=0, column=0, sticky="nsew")
+# 2. Add some widgets and make them fill their cells
+for r in range(3):
+    for c in range(3):
+        btn = tk.Button(root, text=f"{r},{c}")
+        # sticky="nsew" makes it stretch North/South/East/West
+        btn.grid(row=r, column=c, sticky="nsew", padx=2, pady=2)
 
-
-if __name__ == "__main__":
-    app = App()
-    app.mainloop()
+root.mainloop()
