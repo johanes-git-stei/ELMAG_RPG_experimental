@@ -44,10 +44,8 @@ class start_question(tk.Frame):
 
         jawaban = [f"soal/BAB {random_soal_num}/Jawaban Benar.png", f"soal/BAB {random_soal_num}/Jawaban Salah 1.png", f"soal/BAB {random_soal_num}/Jawaban Salah 2.png", f"soal/BAB {random_soal_num}/Jawaban Salah 3.png"]
 
-        randomized_jawaban = random.sample(jawaban, 4)  # Mengacak urutan jawaban
-
         self.imgs = []
-        for p in randomized_jawaban:
+        for p in jawaban:
             pil = Image.open(resource_path(p)).resize((200,113))
             self.imgs.append(ImageTk.PhotoImage(pil))
 
@@ -61,7 +59,8 @@ class start_question(tk.Frame):
         self.selected = tk.IntVar()
 
         # 1. pick a random slot (1–4) for the correct answer
-        self.correct_value = random.randint(1, len(self.imgs))
+        self.correct_value = random.randint(1, len(self.imgs)) 
+        print(self.correct_value)
 
         # 2. make a pool of wrong images
         wrongs = self.imgs[1:].copy()
