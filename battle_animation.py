@@ -60,8 +60,8 @@ class battle_anim(tk.Frame):
     def update_enemy_stat(self,word):
         self.enemyinfo_lbl.config(text=word)
 
-    def update_battle_info(self, text):
-        self.battleinfo_lbl.config(text=text)
+    def update_battle_info(self, word):
+        self.battleinfo_lbl.config(text=word)
 
     def player_att_check(self):
         if self.action[0] != 0:
@@ -72,21 +72,17 @@ class battle_anim(tk.Frame):
                     self.enm_stat[1] -= dmg
                     self.after(2000, lambda: self.update_battle_info(f"serangan anda diblokir sebanyak {self.enm_stat[1]} HP!"))
                     self.update_enemy_stat(f"Monster\n{self.enm_stat[0]} HP (+{self.enm_stat[1]})")
-                    self.check_end_conditions()
                 elif dmg == self.enm_stat[1]:
                     self.enm_stat[1] = 0
                     self.after(2000, lambda: self.update_battle_info(f"serangan anda diblokir sebanyak {self.enm_stat[1]} HP!"))
-                    self.check_end_conditions()
                 elif dmg > self.enm_stat[1]:
                     self.enm_stat[0] -= (dmg - self.enm_stat[1])
                     self.enm_stat[1] = 0
                     self.after(2000, lambda: self.update_battle_info(f"serangan anda diblokir sebanyak {self.enm_stat[1]} HP!"))
                     self.update_enemy_stat(f"Monster\n{self.enm_stat[0]} HP)")
-                    self.check_end_conditions()
             else:
                 self.enm_stat[0] -= dmg
                 self.update_enemy_stat(f"Monster\n{self.enm_stat[0]} HP")
-                self.check_end_conditions()
             self.after(2000, lambda: self.player_blk_check())
         else:
             # proceed to enemy turn
@@ -134,16 +130,13 @@ class battle_anim(tk.Frame):
             if dmg < self.my_stat[1]:
                 self.my_stat[1] -= dmg
                 self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0]} HP (+{self.my_stat[1]})")
-                self.check_end_conditions()
             elif dmg == self.my_stat[1]:
                 self.my_stat[1] = 0
                 self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0]} HP")
-                self.check_end_conditions()
             elif dmg > self.my_stat[1]:
                 self.my_stat[0] -= (dmg - self.my_stat[1])
                 self.my_stat[1] = 0
                 self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0]} HP")
-                self.check_end_conditions()
         else:
             self.my_stat[0] -= dmg
             self.update_my_stat(f"[Kimi No Nawa]\n{self.my_stat[0]} HP")
