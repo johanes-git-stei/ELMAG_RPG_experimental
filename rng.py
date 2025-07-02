@@ -18,3 +18,4 @@ def lcg(n: int) -> int:
             n += 1
 
     return x
+
